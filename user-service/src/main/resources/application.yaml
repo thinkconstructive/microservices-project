@@ -1,0 +1,37 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: user-service
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8999/eureka/
+
+management:
+  health:
+    circuitbreakers:
+      enabled : true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      user-service:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 60
+        minimumNumberOfCalls: 6
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 3s
+        permittedNumberOfCallsInHalfOpenState: 2
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
